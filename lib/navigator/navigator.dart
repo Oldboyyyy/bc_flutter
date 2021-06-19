@@ -60,7 +60,7 @@ class BCNavigator extends _RouteJumpListener {
 
   late RouteJumpListener _routeJumpListener;
   // 首页底部tab
-  late RouteStatusInfo _bottomTab;
+  RouteStatusInfo? _bottomTab;
 
   late RouteStatusInfo _current;
 
@@ -71,7 +71,7 @@ class BCNavigator extends _RouteJumpListener {
   /// 底部导航切换监听
   void onBottomTabChange(int index, Widget page) {
     _bottomTab = RouteStatusInfo(RouteStatus.home, page);
-    _notify(_bottomTab);
+    _notify(_bottomTab!);
   }
 
   /// 添加监听
@@ -110,7 +110,7 @@ class BCNavigator extends _RouteJumpListener {
   /// 实际监听执行方法
   void _notify(RouteStatusInfo current) {
     if (current.widget is BottomNavigator && _bottomTab != null) {
-      current = _bottomTab;
+      current = _bottomTab!;
     }
     _listeners.forEach((listener) {
       listener(current, _current);
