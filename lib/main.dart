@@ -1,6 +1,6 @@
+import 'package:bc_flutter/navigator/bottom_navigator.dart';
 import 'package:bc_flutter/navigator/navigator.dart';
 import 'package:bc_flutter/pages/detail_page.dart';
-import 'package:bc_flutter/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -49,7 +49,7 @@ class BCRouteDelegate extends RouterDelegate<BCRoutePath>
 
   BCRouteDelegate() : navigatorKey = GlobalKey<NavigatorState>() {
     BCNavigator.getInstance().registerNavigateChangeListener(
-        RouteChangeListener(navigateTo: (RouteStatus routeStatus, {Map? args}) {
+        RouteJumpListener(navigateTo: (RouteStatus routeStatus, {Map? args}) {
       _routeStatus = routeStatus;
       if (routeStatus == RouteStatus.detail) {
         this.id = args != null ? args['id'] : '';
@@ -75,12 +75,13 @@ class BCRouteDelegate extends RouterDelegate<BCRoutePath>
     print(routeStatus);
     if (routeStatus == RouteStatus.home) {
       pages.clear();
-      page = pageWrap(HomePage());
+      page = pageWrap(BottomNavigator());
     } else if (routeStatus == RouteStatus.detail) {
       page = pageWrap(DetailPage(id));
     }
 
     temPages = [...temPages, page];
+    BCNavigator.getInstance().notify(temPages, pages);
     pages = temPages;
 
     return WillPopScope(
@@ -93,7 +94,9 @@ class BCRouteDelegate extends RouterDelegate<BCRoutePath>
             if (!route.didPop(result)) {
               return false;
             }
+            var temPages = [...pages];
             pages.removeLast();
+            BCNavigator.getInstance().notify(pages, temPages);
             return true;
           },
         ),
